@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <style>
+    h1 {
+      font-size: 72px;
+      background: -webkit-linear-gradient(white, #2c0c6c);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+  </style>
+  <body>
+    <h1 class="w-full text-[40px] font-bold text-center">Movie App</h1>
+
+    <form class="max-w-md mx-auto mt-[30px]">
+      <label
+        for="default-search"
+        class="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white"
+        >Search</label
+      >
+      <div class="relative">
+        <div
+          class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none"
+        ></div>
+        <input
+          type="search"
+          id="Searchinput"
+          class="block w-full p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+          placeholder="Search Your Favourite Movie"
+          required
+        />
+      </div>
+    </form>
+    <div id="newsect" class="grid grid-cols-4 container mx-auto"></div>
+  </body>
+  <script>
+    let api;
+    // let newsect = document.querySelector("#newsect");
+
+    function fetchapi(newMovie) {
+      console.log("new", newMovie);
+      if (newMovie == undefined) {
+        api = `https://api.themoviedb.org/3/discover/movie?sort_by=popularity.desc&api_key=04c35731a5ee918f014970082a0088b1&page=1`;
+      } else {
+        api = `https://api.themoviedb.org/3/search/movie?&api_key=04c35731a5ee918f014970082a0088b1&query=${newMovie}`;
+      }
+
+      console.log(api);
+
+      fetch(api)
+        .then((res) => {
+          return res.json();
+        })
+        .then((final) => {
+          let data = final.results;
+          let newsect = document.getElementById("newsect");
+          console.log(data);
+
+          newsect.innerHTML = "";
+          data.map((v, i) => {
+            // console.log(v);
+
+            newsect.innerHTML += `<div ">
+                <div class=" mt-5 ms-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
+                  <img width="290px" height="60px" class="rounded-sm" src="https://image.tmdb.org/t/p/w1280${v.poster_path}" alt="${v.original_title}" />
+                  <div class="p-5">
+                    <a href="#">
+                      <h5 class="title mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">${v.original_title}</h5>
+                    </a>
+                    <p class="mb-3 font-bold text-gray-700 dark:text-gray-400">Released Date :${v.release_date}</p>
+
+                    </div>
+                </div>
+              </div>
+
+            `;
+          });
+        })
+        .catch((error) => {
+          // console.log(error);
+        });
+    }
+
+    fetchapi();
+
+    let Searchinput = document.querySelector("#Searchinput");
+    Searchinput.addEventListener("keyup", (e) => {
+      let newMovie = e.target.value;
+      console.log(newMovie);
+      fetchapi(newMovie);
+    });
+  </script>
+</html>
